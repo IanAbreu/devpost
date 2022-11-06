@@ -1,4 +1,5 @@
 import styled from 'styled-components/native';
+import Feather from 'react-native-vector-icons/Feather';
 
 export const Container = styled.View`
 flex: 1;
@@ -25,6 +26,17 @@ padding: 10px;
 border-radius: 8px;
 font-size: 17px;
 `;
+export const EyeBtn = styled.TouchableOpacity`
+position: absolute;
+right: 14%;
+top: 40%;
+z-index: 99;
+`
+export const Eye = styled(Feather).attrs(props => ({
+  name: props.name,
+  size: props.size,
+  color: props.color
+}))``;
 
 export const Button = styled.TouchableOpacity`
 width: 80%;

@@ -1,7 +1,8 @@
 import React, { useState, useContext } from 'react';
-import { Text, ActivityIndicator } from 'react-native';
+import { Text, ActivityIndicator, View } from 'react-native';
 
-import { Container, Title, Input, Button, ButtonText, SignUpButton, SignUpText } from './styles';
+
+import { Container, Title, Input, Button, ButtonText, SignUpButton, SignUpText, EyeBtn, Eye } from './styles';
 
 import { AuthContext } from '../../contexts/auth';
 
@@ -10,6 +11,7 @@ export default function Login() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isHidden, setIsHidden] = useState(true);
 
   const { signUp, signIn, loadingAuth } = useContext(AuthContext);
 
@@ -20,7 +22,7 @@ export default function Login() {
     }
     await signIn(email, password);
   }
-  
+
   async function handleSignUp() {
     if (name === '' || email === '' || password === '') {
       console.log('Preencha todos os campos para cadastrar');
@@ -50,20 +52,25 @@ export default function Login() {
           keyboardType='email-address'
         />
 
-        <Input
-          placeholder='Digite sua senha'
-          onChangeText={(e) => { setPassword(e) }}
-          value={password}
-          secureTextEntry={true}
-        />
+        <View style={{position: 'relative', flexDirection:'row', justifyContent: 'center',width: '100%' }}>
+          <Input
+            placeholder='Digite sua senha'
+            onChangeText={(e) => { setPassword(e) }}
+            value={password}
+            secureTextEntry={isHidden}
+          />
+          <EyeBtn onPress={() => setIsHidden(!isHidden)}>
+            <Eye name={isHidden ? 'eye' : 'eye-off'} size={25} color='#afafaf' />
+          </EyeBtn>
+        </View>
 
         <Button onPress={handleSignIn}>
-          {loadingAuth ? 
-          (
-          <ActivityIndicator size={30} color='#fff'/>
-          ) : (
-          <ButtonText>Acessar</ButtonText>
-          )}
+          {loadingAuth ?
+            (
+              <ActivityIndicator size={30} color='#fff' />
+            ) : (
+              <ButtonText>Acessar</ButtonText>
+            )}
         </Button>
 
         <SignUpButton onPress={toogleLogin}>
@@ -93,20 +100,25 @@ export default function Login() {
         value={email}
         keyboardType='email-address'
       />
+        <View style={{position: 'relative', flexDirection:'row', justifyContent: 'center',width: '100%' }}>
 
       <Input
         placeholder='Digite sua senha'
         onChangeText={(e) => { setPassword(e) }}
         value={password}
-        secureTextEntry={true}
+        secureTextEntry={isHidden}
       />
+        <EyeBtn onPress={() => setIsHidden(!isHidden)}>
+            <Eye name={isHidden ? 'eye' : 'eye-off'} size={25} color='#afafaf' />
+          </EyeBtn>
+        </View>
 
       <Button onPress={handleSignUp}>
-      {loadingAuth ? 
+        {loadingAuth ?
           (
-          <ActivityIndicator size={30} color='#fff'/>
+            <ActivityIndicator size={30} color='#fff' />
           ) : (
-          <ButtonText>Cadastrar</ButtonText>
+            <ButtonText>Cadastrar</ButtonText>
           )}
       </Button>
 
