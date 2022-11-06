@@ -1,7 +1,10 @@
 import React, { useContext, useState, } from 'react';
 import { Modal, Platform } from 'react-native';
 
+import {launchImageLibrary} from 'react-native-image-picker';
+
 import firestore from '@react-native-firebase/firestore'
+import storage from '@react-native-firebase/storage'
 
 import { AuthContext } from '../../contexts/auth';
 import {
@@ -28,7 +31,6 @@ export default function Profile() {
 
   const [name, setName] = useState(user?.name)
   const [url, setUrl] = useState(user?.url)
-  //const [url, setUrl] = useState('https://midias.correiobraziliense.com.br/_midias/jpg/2013/11/15/675x450/1_cbifot151120135622-18891928.jpg?20220922092144?20220922092144')
   const [openModal, setOpenModal] = useState(false)
 
   async function handleSignOut() {
@@ -63,8 +65,57 @@ export default function Profile() {
   }
 
   const uploadFile = () => {
-    alert('clicou')
+    const options = {
+      noData: true,
+      mediaType: 'photo'
+    }
+    launchImageLibrary(options, response => {
+      if (response.didCancel) {
+        console.log('cancelou');
+        
+      }else if (response.error) {
+        console.log('ops deu algum erro');
+      }else {
+        uploadFileFirebase(response)
+        .then(() => {
+          uploadAvatarPosts()
+        })
+        setUrl(response.assets[0].uri)
+      }
+    })
   }
+  const getFileLocalePath = (response) => {
+    return response.assets[0].uri
+  }
+
+  const uploadFileFirebase = async (response) => {
+    const fileSource = getFileLocalePath(response)
+    
+    const storageRef = storage().ref('users').child(user?.uid);
+    return await storageRef.putFile(fileSource);
+  }
+  async function uploadAvatarPosts() {
+    const storageRef = storage().ref('users').child(user?.uid);
+    const url = await storageRef.getDownloadURL()
+    .then(async (image) => {
+      const postDocs = await firestore().collection('posts')
+      .where('userId', '==', user?.uid).get();
+      postDocs.forEach( async doc => {
+        await firestore().collection('posts').doc(doc.id).update({
+          avatarURL: image
+        })
+      })
+    })
+    .catch((error) => {
+      console.log('Erro ao atualizar fotos dos posts', error);
+    })
+
+
+  }
+
+
+
+
   return (
     <Container>
       <Header />
