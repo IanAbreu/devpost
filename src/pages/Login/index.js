@@ -1,10 +1,13 @@
 import React, { useState, useContext } from 'react';
 import { Text, ActivityIndicator, View } from 'react-native';
 
-
 import { Container, Title, Input, Button, ButtonText, SignUpButton, SignUpText, EyeBtn, Eye } from './styles';
 
 import { AuthContext } from '../../contexts/auth';
+
+import * as Animatable from 'react-native-animatable';
+const TitleAnimated = Animatable.createAnimatableComponent(Title);
+
 
 export default function Login() {
   const [login, setLogin] = useState(true);
@@ -41,9 +44,9 @@ export default function Login() {
     return (
       <Container>
 
-        <Title>
+        <TitleAnimated animation={'flipInY'}>
           Dev<Text style={{ color: '#e52246' }}>Post</Text>
-        </Title>
+        </TitleAnimated>
 
         <Input
           placeholder='Digite seu e-mail'
@@ -84,9 +87,9 @@ export default function Login() {
   return (
     <Container>
 
-      <Title>
+      <TitleAnimated animation={'pulse'}>
         Dev<Text style={{ color: '#e52246' }}>Post</Text>
-      </Title>
+      </TitleAnimated>
 
       <Input
         placeholder='Digite seu nome'

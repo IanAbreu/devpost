@@ -34,17 +34,21 @@ export default function Profile() {
   const [openModal, setOpenModal] = useState(false)
 
   useEffect(() => {
+    let isActive = true;
+
     async function loadAvatar() {
       try {
-        let response = await storage().ref('users').child(user?.uid).getDownloadURL();
-        setUrl(response);
+        if(isActive) {
+          let response = await storage().ref('users').child(user?.uid).getDownloadURL();
+          setUrl(response);
+        }
       }catch(error) {
         console.log('erro', error);
       }
     }
     loadAvatar();
 
-    return () => loadAvatar();
+    return () => isActive = false;
   },[])
 
   async function handleSignOut() {
