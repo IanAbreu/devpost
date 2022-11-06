@@ -1,4 +1,4 @@
-import React, { useContext, useState, } from 'react';
+import React, { useContext, useEffect, useState, } from 'react';
 import { Modal, Platform } from 'react-native';
 
 import {launchImageLibrary} from 'react-native-image-picker';
@@ -32,6 +32,20 @@ export default function Profile() {
   const [name, setName] = useState(user?.name)
   const [url, setUrl] = useState(user?.url)
   const [openModal, setOpenModal] = useState(false)
+
+  useEffect(() => {
+    async function loadAvatar() {
+      try {
+        let response = await storage().ref('users').child(user?.uid).getDownloadURL();
+        setUrl(response);
+      }catch(error) {
+        console.log('erro', error);
+      }
+    }
+    loadAvatar();
+
+    return () => loadAvatar();
+  },[])
 
   async function handleSignOut() {
     await signOut();
